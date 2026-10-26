@@ -24,7 +24,7 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-
+e
 st.title("🐤 Flappy 3D")
 st.caption("Fly through the pipes, keep your wings moving, and beat your high score.")
 
@@ -82,6 +82,21 @@ components.html(
             color: #174b67;
           }
           .score small {
+            display: block;
+            margin-bottom: 4px;
+            color: #608399;
+            font-size: 10px;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+          }
+          .high-score {
+            min-width: 102px;
+            text-align: center;
+            color: #174b67;
+            font-size: 20px;
+            line-height: 1.1;
+          }
+          .high-score small {
             display: block;
             margin-bottom: 4px;
             color: #608399;
@@ -147,7 +162,10 @@ components.html(
         <div id="game">
           <div class="hud">
             <div class="badge">SPACE · CLICK · TAP to flap</div>
-            <div class="badge score"><small>Score</small><span id="score">0</span></div>
+            <div style="display:flex; gap:10px">
+              <div class="badge score"><small>Score</small><span id="score">0</span></div>
+              <div class="badge high-score"><small>Best</small><span id="high-score">0</span></div>
+            </div>
           </div>
           <div id="overlay">
             <div id="card">
@@ -163,6 +181,7 @@ components.html(
           (() => {
             const game = document.getElementById("game");
             const scoreLabel = document.getElementById("score");
+            const highScoreLabel = document.getElementById("high-score");
             const overlay = document.getElementById("overlay");
             const title = document.getElementById("title");
             const message = document.getElementById("message");
@@ -279,6 +298,13 @@ components.html(
             let velocity = 0;
             let elapsed = 0;
             let score = 0;
+            let highScore = 0;
+            try {
+              highScore = Number(window.localStorage.getItem("flappy3d-high-score")) || 0;
+            } catch (error) {
+              console.warn("Could not load the saved high score.", error);
+            }
+            highScoreLabel.textContent = String(highScore);
             let lastTime = performance.now();
             let spawnTimer = 0;
 
@@ -336,6 +362,15 @@ components.html(
 
             function endGame() {
               running = false;
+              if (score > highScore) {
+                highScore = score;
+                highScoreLabel.textContent = String(highScore);
+                try {
+                  window.localStorage.setItem("flappy3d-high-score", String(highScore));
+                } catch (error) {
+                  console.warn("Could not save the high score.", error);
+                }
+              }
               showOverlay(true);
             }
 
