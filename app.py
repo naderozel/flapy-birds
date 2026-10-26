@@ -24,7 +24,6 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-e
 st.title("🐤 Flappy 3D")
 st.caption("Fly through the pipes, keep your wings moving, and beat your high score.")
 
